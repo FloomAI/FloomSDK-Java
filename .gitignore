@@ -44,3 +44,4 @@ bin/
 gradlew.bat
 gradlew*
 /.idea/
+gradle.properties

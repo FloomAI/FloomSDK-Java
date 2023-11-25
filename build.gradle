@@ -1,5 +1,7 @@
 plugins {
     id 'java-library'
+    id 'signing'
+    id 'maven-publish'
 }
 
 group = 'ai.floom'
@@ -26,4 +28,68 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'ai.floom'
+            artifactId = 'java-sdk'
+            version = '1.0.0'
+
+            from components.java
+
+            pom {
+                name = 'Floom Java SDK'
+                description = 'Floom orchestrates and executes Generative AI pipelines, allowing developers and DevOps teams to focus on what matters most. It offers enterprise-grade, production-ready, and battle-tested solutions, now open-source and free for everyone, including commercial use.'
+                url = 'https://floom.ai'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/license/mit/'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'floomai'
+                        name = 'Floom AI'
+                        email = 'dev@floom.ai'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/FloomAI/FloomSDK-Java.git'
+                    developerConnection = 'scm:git:ssh://github.com/FloomAI/FloomSDK-Java.git'
+                    url = 'https://github.com/FloomAI/FloomSDK-Java'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'Sonatype'
+            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+
+            credentials {
+                username = System.getenv("SONATYPE_USERNAME")
+                password = System.getenv("SONATYPE_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
